@@ -23,9 +23,10 @@ class Button(machine.Pin):
 
         super().__init__(pin, machine.Pin.IN)
 
-        timer = machine.Timer(0)
+        # Timer -1 is a "virtual" RTOS timer, rather than a hardware one.
+        timer = machine.Timer(-1)
 
-        # the timer callback needs a parameter, so this just consumes that.
+        # The timer callback has a parameter, so this consumes that.
         def _callback(timer):
             callback()
 
