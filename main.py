@@ -68,11 +68,14 @@ class LED(machine.Pin):
 
 
 button = Button()
-led = LED()
 relay = Relay()
+status_led = LED()
 
 
 def main():
+    # Setup begins.
+    status_led.on()
+
     config = catbus_config.Config()
 
     if not config.device_name:
@@ -100,6 +103,9 @@ def main():
                      retain=True, qos=1)
 
     button.set_callback(on_button_pressed)
+
+    # Setup finished.
+    status_led.off()
 
     while True:
         try:
