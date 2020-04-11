@@ -17,21 +17,21 @@ import catbus_config
 class Button(machine.Pin):
     """An input button that calls a callback when pressed."""
 
-    def __init__(self, pin, callback=None):
-        if not callback:
-            raise ValueError('callback must not be None')
-
+    def __init__(self, pin=0):
         super().__init__(pin, machine.Pin.IN)
 
         # Timer -1 is a "virtual" RTOS timer, rather than a hardware one.
-        timer = machine.Timer(-1)
+        self._timer = machine.Timer(-1)
+
+    def set_callback(self, callback):
 
         # The timer callback has a parameter, so this consumes that.
         def _callback(timer):
             callback()
 
         def debounce_button(pin):
-            timer.init(mode=timer.ONE_SHOT, period=200, callback=_callback)
+            self._timer.init(mode=machine.Timer.ONE_SHOT,
+                             period=200, callback=_callback)
 
         self.irq(trigger=machine.Pin.IRQ_RISING, handler=debounce_button)
 
@@ -39,7 +39,7 @@ class Button(machine.Pin):
 class Relay(machine.Pin):
     """An output relay."""
 
-    def __init__(self, pin):
+    def __init__(self, pin=12):
         super().__init__(pin, machine.Pin.OUT)
 
     def toggle(self):
@@ -52,6 +52,26 @@ class Relay(machine.Pin):
         return b'on' if self.value() else b'off'
 
 
+class LED(machine.Pin):
+    """The non-relay LED on the front of the device.
+
+    The LED on the Sonoff is LOW for on and HIGH for off."""
+
+    def __init__(self, pin=13):
+        super().__init__(pin, machine.Pin.OUT)
+
+    def on(self):
+        super().off()
+
+    def off(self):
+        super().on()
+
+
+button = Button()
+led = LED()
+relay = Relay()
+
+
 def main():
     config = catbus_config.Config()
 
@@ -60,8 +80,6 @@ def main():
         return
 
     topic = config.mqtt_topic.encode('utf-8')
-
-    relay = Relay(12)
 
     def on_message(topic, data):
         if data == b'on':
@@ -81,7 +99,7 @@ def main():
         mqtt.publish(topic, relay.value_catbus(),
                      retain=True, qos=1)
 
-    button = Button(0, callback=on_button_pressed)
+    button.set_callback(on_button_pressed)
 
     while True:
         try:
