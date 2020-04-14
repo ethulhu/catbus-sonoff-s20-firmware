@@ -14,3 +14,4 @@ The firmware:
 ## Links
 
 - [Tasmota](https://github.com/arendst/Tasmota) is an all-in-one firmware for such devices.
+- [MicroPython docs for ESP8266](https://docs.micropython.org/en/latest/esp8266/quickref.html).
