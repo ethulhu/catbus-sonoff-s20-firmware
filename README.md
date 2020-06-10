@@ -59,3 +59,14 @@ The firmware:
 
 - [Tasmota](https://github.com/arendst/Tasmota) is an all-in-one firmware for such devices.
 - [MicroPython docs for ESP8266](https://docs.micropython.org/en/latest/esp8266/quickref.html).
+
+## Snippets
+
+To get the device's MAC address, run:
+
+```python
+import network
+import ubinascii
+
+ubinascii.hexlify(network.WLAN().config('mac'), ':').decode()
+```
