@@ -53,7 +53,7 @@ The firmware:
    catbus_config.edit()
    ```
 
-10. Reboot.
+10. Reboot the switch by unplugging it, waiting for around 10 seconds for the capacitors to drain, and plugging it back in.
 
 ## Links
 
