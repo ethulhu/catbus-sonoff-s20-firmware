@@ -111,9 +111,13 @@ def main():
         try:
             mqtt.wait_msg()
         except:
-            mqtt.connect()
-            mqtt.subscribe(topic, qos=1)
-            time.sleep(1)
+            status_led.on()
+            try:
+                mqtt.connect()
+                mqtt.subscribe(topic, qos=1)
+                status_led.off()
+            except:
+                time.sleep(1)
 
 
 main()
